@@ -64,7 +64,7 @@ import {
       const updated = await api(`/api/tasks/${id}`, "PUT", payload, uid);
       return toTask(updated);
     } else {
-      const local = await getOfflineTasks();
+      const local = await getOfflineTasks(uid);
       const existing = local.find((t) => t.id === id || t._id === id);
       if (existing) {
         const merged = {
@@ -91,8 +91,12 @@ import {
   
   export async function syncOfflineQueue(uid) {
     const queue = await getQueue();
+    const remaining = [];
     for (const item of queue) {
-      if (item.uid !== uid) continue;
+      if (item.uid !== uid) {
+        remaining.push(item);
+        continue;
+      }
       try {
         if (item.op === "create") {
           const { id, _id, ...rest } = item.task;
@@ -110,9 +114,13 @@ import {
         }
       } catch (e) {
         console.error("Sync error for", item, e);
+        remaining.push(item);
       }
     }
     await clearQueue();
+    for (const item of remaining) {
+      await addToQueue(item);
+    }
   }
   
   export async function getTasksForUser(uid) {
@@ -120,7 +128,7 @@ import {
       // When online, fetch from API and update the offline cache
       // so the same data is available when the user goes offline.
       const tasks = await fetchTasks(uid);
-      await setOfflineTasks(tasks);
+      await setOfflineTasks(tasks, uid);
     return tasks;
   }
   // When offline, fall back to the cached copy in IndexedDB, filtered by user.

@@ -26,16 +26,15 @@ export const getOfflineTasks = async (userId) => {
   return all.filter((t) => t.userId === userId);
 };
 
-// Replace all cached tasks with the given list.
+// Replace all cached tasks with the given list for this user.
 // This keeps offline data in sync with the latest server state.
-export const setOfflineTasks = async (tasks) => {
+export const setOfflineTasks = async (tasks, userId) => {
   const db = await dbPromise;
   await db.clear("tasks");
   for (const task of tasks || []) {
-    // Ensure we always have an id for the keyPath.
     const id = task.id || task._id;
     if (!id) continue;
-    await db.put("tasks", { ...task, id });
+    await db.put("tasks", { ...task, id, userId: task.userId || userId });
   }
 };
 
