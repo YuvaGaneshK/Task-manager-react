@@ -48,6 +48,8 @@ A production-quality Progressive Web Application (PWA) for task management, buil
 - **Firebase** (Auth, Firestore)
 - **IndexedDB** (via `idb`) for offline storage
 - **Create React App** (react-scripts 5)
+-  **expressjs** (Backend)
+-   **MongoDB ** (Database )  
 
 ## How to Run the App
 
@@ -106,10 +108,10 @@ A production-quality Progressive Web Application (PWA) for task management, buil
 AI tools were used to help with:
 - Initial Firebase setup and Auth/Firestore integration
 - Task service architecture (offline queue, IndexedDB + Firestore)
+- To make the code cleaner.
 - To professionalize the "README.md" file
 
 ## Known Issues / Limitations
 
-- **Firestore Index**: If you use `orderBy("createdAt", "desc")`, Firestore may prompt you to create a composite index on first run. Follow the link in the console to create it.
 - **Push Notifications**: FCM is not implemented; listed as an advanced feature for future work.
 - **Voice Input**: Not implemented (Expo Speech package targets React Native, not web PWA).
